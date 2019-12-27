@@ -1,163 +1,267 @@
 <html>
-    
- <title>3DS Island - Chat</title>   
-    
-<meta name="viewport" content="width=device-width,initial-scale=1.0,height=device-height" />
-
+<head>
+<title>3DSIsland - Pong</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="viewport" content="width=device-width">
+<style> 
+body { margin: 0px; }
+#bottomscreen { width: 320px; height: 240px; overflow:hidden}
+</style>
+<style type="text/css"> 
+#pongTable {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 232px;
+	height: 168px;
+	border: 4px solid #ccc;
+	background-color: #000000;
+	z-index: 1;
+}
+#playerOne {
+	position: absolute;
+	top: 10px;
+	left: 15px;
+	width: 10px;
+	height: 35px;
+	background-color: red;
+	z-index: 2;
+}
+#playerTwo {
+	position: absolute;
+	top: 10px;
+	left: 390px;
+	width: 10px;
+	height: 35px;
+	background-color: blue;
+	z-index: 2;
+}
+#ball {
+	position: absolute;
+	top: 10px;
+	left: 210px;
+	width: 7px;
+	height: 7px;
+	clip: rect(0px 7px 7px 0px);
+	background-color: lime;
+	z-index: 2;
+	display: none;
+}
+#click {
+	position: absolute;
+	top: 75px;
+	left: 0px;
+	width: 240px;
+	text-align: center;
+	font-family: Tahoma;
+	font-size: 10px;
+	z-index: 3;
+}
+#scores {
+	position: absolute;
+	top: 158px;
+	left: 8px;
+	width: 224px;
+	font-family: Tahoma;
+	font-size: 11px;
+	z-index: 3;
+}
+</style>
  
-
-<body style="margin: 0px; background-color: #000000;" id="body" width="400" height="480">
-                <canvas id="canvas"></canvas>
-
-<script>
-        var canvas = document.getElementById("canvas"),
-            width = canvas.width = 320,
-            height = canvas.height = 212;
+<script type="text/javascript"> 
+ 
+/***********************************************
+* DHTML Phong script- � nathan (http://www.n-son.com/)
+* Permission granted to DynamicDrive.com to feature script
+* This notice must stay intact for use
+* Visit http://www.dynamicdrive.com/ for full source code
+***********************************************/
+ 
+var ballAng;
+var speed = 8;
+var ping = 6;
+var pong = 0;
+var mouseSpeed;
+var tempY = 0;
+var lastMove = 0;
+ 
+var ball;
+var ballx = 0;
+var bally = 0;
+ 
+var playerOne;
+var p1x = 15;
+var p1y = 68;
+ 
+var playerTwo;
+var p2x = 217;
+var p2y = 68;
+ 
+function init() {
+    ball =  document.getElementById("ball");
+    playerOne = document.getElementById("playerOne");
+    playerTwo = document.getElementById("playerTwo");
+    
+	document.getElementById("click").style.display = "none";
+	document.getElementById("ball").style.display = "block";
+    
+    ballx = 210;
+    bally = 160;
+    ball.style.left = ballx+"px";
+    ball.style.top = bally+"px";
         
-        var enemyVelocity = 5;
-        var enemyScore = 0,
-            playerScore = 0;
-        
-        document.body.appendChild(canvas);
-        
-        var ctx = canvas.getContext("2d");
-        
-        ctx.fillRect(0, 0, width, height);
-        
-            var paddle = {
-            _x: 0,
-            _y: 0,
-            _width: 0,
-            _height: 0,
-            create: function(x, y, width, height) {
-                var p = Object.create(this);
-                    p._x = x;
-                    p._y = y;
-                    p._width = width;
-                    p._height = height;
-                return p;
-            },
-        
-            render: function(c) {
-                c.fillRect(this._x, this._y, this._width, this._height);
-            },
-        
-            setX: function(x) {
-                this._x = x
-            },
-        
-            setY: function(y) {
-                this._y = y;
-            },
-        
-            getX: function() {
-                return this._x;
-            },
-        
-            getY: function() {
-                return this._y;
-            },
-        
-                getWidth: function() {
-                return this._width;
-            },
-        
-            getHeight: function() {
-                return this._height;
-            }
-        };
-        
-        var ball = {
-            _x: width / 2, // center the ball 
-            _y: height / 2, // center the ball
-            _vx: -4,
-            _vy: 4,
-            _size: 6,
-        
-            update: function() {
-                this._x += this._vx;
-                this._y += this._vy;
-            },
-        
-            render: function(c) {
-                c.beginPath();
-                c.arc(this._x, this._y, this._size, 0, Math.PI * 2);
-                c.fill();
-                c.closePath();
-            }
-        };
-        
-        var playerPaddle = paddle.create(0, 0, 10, 100);
-        var enemyPaddle = paddle.create(width - 10, 0, 10, 100);
-        
-        document.body.addEventListener("mousemove", mouseMoveHandler);
-        
-        function mouseMoveHandler(event) {
-            playerPaddle.setY(event.clientY - playerPaddle.getHeight() / 2);
+	document.onmouseup = null;
+	document.onmousemove = mouseMoved;
+    
+	ballAng = Math.round( Math.random() * 100 ) + 130;
+	moveDaBall = setInterval(moveBall, 50);
+}
+ 
+function mouseMoved(e)
+{
+	e = (e)?e:event;
+    lastMove = e.clientY;
+}
+ 
+function movePaddle() {
+    
+	if( tempY ) {
+		mouseSpeed = Math.round((lastMove - tempY) * 1.5);
+		if( mouseSpeed == 0 ) mouseSpeed = 1;
+	}
+    
+    p1y = lastMove - 18;
+    if( p1y < 4 || p1y > 139 ) {
+        if( p1y < 4 ) {
+            p1y = 4;
+        } else {
+            p1y = 139;
         }
+    }
+    playerOne.style.top = p1y + "px";
+	tempY = lastMove;
+}
+function moveBall() {
+	var ballX = ballx;
+	var ballY = bally;
+	var playOneX = p1x;
+	var playOneY = p1y;
+	var playTwoX = p2x;
+	var playTwoY = p2y;
+    
+    movePaddle();
+    
+	if( ballY >= (playOneY - 5) && ballY <= (playOneY + 35 + 5) && ballX >= playOneX && ballX <= (playOneX + 10) ) {
+		if( pong == 3 ) {
+			ping++;
+			pong = 0;
+		} else {
+			pong++;
+		}
+        ballx = playOneX + 10;
+		ball.style.left = ballx + "px";
+		ballAng = 180 - ballAng - mouseSpeed;
+	}
+	if( ballY >= (playTwoY - 5) && ballY <= (playTwoY + 35 + 5) && ballX >= playTwoX && ballX <= (playTwoX + 10) ) {
+		if( pong == 3 ) {
+			ping++;
+			pong = 0;
+		} else {
+			pong++;
+		}
+        ballx = playTwoX;
+		ball.style.left = bally + "px";
+		ballAng = 180 - ballAng;
+	}
+	if( ballY < 15 || ballY > 171 ) {
+        bally = (ballY < 15) ? 15 : 171;
+		ball.style.top = bally+"px";
+		ballAng = 360 - ballAng;
+	}
+	if( ballX <= 14 || ballX >= 233 ) {
+        ballx = (ballX <=14) ? 14 : 233;
+		ball.style.left = ballx + "px";
         
-        function reset() {
-            ball._x = width / 2;
-            ball._y = height / 2;
-        ball._vx *= -1;
-        }
-        
-        update();
-        
-        function update() {
-        
-            ctx.fillStyle = "black";
-            ctx.fillRect(0, 0, width, height);
-        
-            if(ball._y - ball._size < 0 || ball._y + ball._size > height) {
-            ball._vy *= -1;
-        }
-        
-        if(ball._x - ball._size < 0) {
-            if(ball._y >= playerPaddle.getY() && ball._y <= playerPaddle.getY() + playerPaddle.getHeight()) {
-                ball._vx *= -1;
-            } else {
-            enemyScore++;
-          reset();
-            }
-        }
-        
-        if(ball._x + ball._size > width) {
-            if(ball._y >= enemyPaddle.getY() && ball._y <= enemyPaddle.getY() + enemyPaddle.getHeight()) {
-                ball._vx *= -1;
-            } else {
-        playerScore++;
-        reset();
-            }
-        }
-        
-            var enemyPos = enemyPaddle.getY();
-        
-        
-        // if the paddle is at the top of the screen, start moving down
-        if(enemyPos < 0) {
-            enemyVelocity *= -1;
-        }
-        
-        // if the paddle is at the bottom of the screen, start moving up
-        if(enemyPos + enemyPaddle.getHeight() > height) {
-            enemyVelocity *= -1;
-        }
-        
-            // update the position of the enemy paddle
-        enemyPaddle.setY(enemyPos + enemyVelocity);
-        
-        ball.update();
-        ctx.fillStyle = "white";
-            playerPaddle.render(ctx);
-            enemyPaddle.render(ctx);
-        ball.render(ctx);
-        
-            ctx.fillText(playerScore, width / 4, height / 10);
-        ctx.fillText(enemyScore, width / 4 * 3, height / 10);
-            requestAnimationFrame(update);
-        }
-        </script>
-
+		if( ballX <= 14 ) {
+			endPoint(document.getElementById("twoScore"));
+		} else {
+			endPoint(document.getElementById("oneScore"));
+		}
+	}
+	moveAI( ballY );
+	moveObjAtAngle( ball, ballAng, ping);
+}
+function moveObjAtAngle( obj, ang, dist ) {
+        ballx = ballx + ( dist * Math.cos( ang * (Math.PI/180) ) );
+        bally = bally - ( dist * Math.sin( ang * (Math.PI/180) ) );
+		obj.style.left = ballx + "px";
+		obj.style.top  = bally + "px";
+}
+function moveAI( y ) {
+	var AI = playerTwo;
+	y = y - 10;
+	y = p2y + ((y - p2y) / speed);
+	if( y < 4 || y > 139 ) {
+		if( y < 4 ) {
+			y = 4;
+		} else {
+			y = 139;
+		}
+	}
+    p2y = y;
+	AI.style.top = y +"px";
+}
+function endPoint(place) {
+	clearInterval(moveDaBall);
+	ping = 6;
+	pong = 0;
+	document.onmouseup = init;
+	document.getElementById("click").innerHTML = "<font color=\"white\">tap to continue</font>";
+	place.innerHTML = parseInt(place.innerHTML) + 1;
+	if( parseInt(place.innerHTML) > 20 ) {
+		if( place.id == "oneScore" ) {
+			endGame(1);
+		} else {
+			endGame(0);
+		}
+	}
+	document.getElementById("click").style.display = "inline";
+}
+function endGame(win) {
+	document.onmouseup = restartGame;
+	if( win ) {
+		document.getElementById("click").innerHTML = "<font color=\"white\">you win! tap to start over</font>";
+	} else {
+		document.getElementById("click").innerHTML = "<font color=\"white\">you lose! tap to start over</font>";
+	}
+}
+function restartGame() {
+	document.getElementById("oneScore").innerHTML = 0;
+	document.getElementById("twoScore").innerHTML = 0;
+	init();
+}
+document.onmouseup = init;
+</script>
+ 
+</head>
+<body>
+ 
+<div id="bottomscreen">
+<div id="pongTable">
+	<div style="float: right; width: 50%; height: 100%; border-left: 2px dashed #DDD;"> </div>
+</div>
+<div id="playerOne" style="left: 15px; top: 68px"> </div>
+<div id="playerTwo" style="left: 217px; top: 68px"> </div>
+<div id="ball" style="left: 210px; top: 160px"> </div>
+<div id="click"><font color=\"white\">tap to start the game</font></div>
+<div id="scores">
+	<span style="float: left;" id="oneScore"><font color="white">0</font></span>
+	<span style="float: right;" id="twoScore"><font color="white">0</font></span>
+</div>
+</div>
+</div>
+><!-- Freewebs Sticker -->
+<script language="JavaScript" src="http://images.freewebs.com/JS/Freebar/btn_mirrorblack.js">
+</script
 </body>
 </html>
