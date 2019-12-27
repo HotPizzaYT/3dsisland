@@ -1,0 +1,58 @@
+<html>
+    
+ <title>3DSIsland</title>   
+    
+<meta name="viewport" content="width=device-width,initial-scale=1.0,height=device-height" />
+
+ 
+
+<body style="margin: 0px; background-color: #000000;" id="body" width="400" height="480">
+<div style="overflow: auto; width: 320; height: 240; background-color: #ffffff;">
+        <div id="paint">
+                <canvas id="myCanvas"></canvas>
+          </div>
+          <script>
+      var canvas = document.getElementById('myCanvas');
+      var ctx = canvas.getContext('2d');
+       
+      var painting = document.getElementById('paint');
+      var paint_style = getComputedStyle(painting);
+      canvas.width = 320
+      canvas.height = 240
+      
+      var mouse = {x: 0, y: 0};
+       
+      canvas.addEventListener('mousemove', function(e) {
+        mouse.x = e.pageX - this.offsetLeft;
+        mouse.y = e.pageY - this.offsetTop;
+      }, false);
+      
+      ctx.lineWidth = 3;
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#00CC99';
+       
+      canvas.addEventListener('mousedown', function(e) {
+          ctx.beginPath();
+          ctx.moveTo(mouse.x, mouse.y);
+       
+          canvas.addEventListener('mousemove', onPaint, false);
+      }, false);
+       
+      canvas.addEventListener('mouseup', function() {
+          canvas.removeEventListener('mousemove', onPaint, false);
+      }, false);
+       
+      var onPaint = function() {
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.stroke();
+      };
+      
+          </script>
+        </body>
+      </html>            
+</div>
+
+
+</body>
+</html>
