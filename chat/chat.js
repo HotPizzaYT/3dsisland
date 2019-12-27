@@ -60,7 +60,7 @@ drone.on('error', error => {
 });
 
 function getName() {
- return "test" + Math.random() * 10;
+ return "test" + Math.floor(Math.random() * 10);
 }
 
 function getRandomColor() {
