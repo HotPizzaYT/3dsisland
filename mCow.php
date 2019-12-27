@@ -1,0 +1,1 @@
+<?php $path = dirname(__FILE__); $cron = $path . "/rCow.php"; echo exec("0 * * * * php -q ".$cron." &> /dev/null"); ?>
