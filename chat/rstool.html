@@ -1,0 +1,9 @@
+<script>
+function send(){
+    e = document.getElementById("sendBox").value;
+    document.getElementById('con').src = "https://chromebookgang.000webhostapp.com/chat/rs.php?m=" + encodeURIComponent(e);
+}
+</script>
+<input type="text" placeholder="please input your raw message" id="sendBox"></input><button onclick="send()">click here to send it</button>
+<br>
+<iframe src="javascript:document.print('Console')" title="Console" id="con"></iframe>
