@@ -60,17 +60,7 @@ drone.on('error', error => {
 });
 
 function getName() {
-  var name = prompt('Enter your name');
-  if(name == "" || name == null) {
-    var _name = prompt("Enter a name! It can't be blank.");  
-    if(_name == "" || _name == null) {
-        return "No Name";
-    } else {
-        return _name;
-    }
-  } else {
-      return name;
-  }
+ return "test" + Math.random() * 10;
 }
 
 function getRandomColor() {
