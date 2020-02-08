@@ -1,0 +1,42 @@
+<html>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,height=device-height" /> <meta name="description" content="Upload an already existing video to 3DSTube" />
+<head>
+<script src="codeGen.js"></script>
+</head>
+<body style="margin: 0px; background-color: #000000; color: #ffffff; font-size: 8px;" id="body" width="400" height="480">
+So you want to generate video page code, right? We've got you!.
+<br>
+<input id="title" placeholder="Title of video goes here"></input>
+<br>
+<input id="file" placeholder="Filename"></input>
+<br>
+<input id="fileType" placeholder="MIME file type"></input>
+<br>
+<input id="date" placeholder="Current date"></input>
+<br>
+<input id="uploader" placeholder="Your name"></input>
+<br>
+<br>
+<br>
+<br>
+<button onclick="generateCode();">Generate the code</button>
+<br>
+<textarea id="output" placeholder="Code will appear here"></textarea>
+<br>
+<br>
+<br>
+<br>
+To generate a homepage for this video, please fill out all of the above and these two extra boxes.
+<br>
+<input id="vidPage" placeholder="Page name of your video without .html"></input>
+<br>
+<input id="thumb" placeholder="Name of thumbnail with .png"></input>
+<br>
+<br>
+<br>
+<br>
+<button onclick="generateHomePage();">Generate the code</button>
+<br>
+<textarea id="HPoutput" placeholder="HomePage code will appear here"></textarea>
+</body>
+</html>
