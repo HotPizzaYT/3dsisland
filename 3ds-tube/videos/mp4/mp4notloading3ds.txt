@@ -1,0 +1,3 @@
+The most common problems that cause this is:
+
+Resolution too high
